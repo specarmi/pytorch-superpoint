@@ -20,23 +20,22 @@ if not os.path.exists(results_dir):
 
 bridge = CvBridge()
 count = 0
-clahe = cv2.createCLAHE(5, (8, 8))
+clahe = cv2.createCLAHE(100, (8, 8))
 new_bag = rosbag.Bag('new_bag', 'w')
-for topic, msg, t in bag.read_messages(topics=['/ubol/image_raw']):
+for topic, msg, t in bag.read_messages(topics=['/thermal/image_raw']):
 
     try:
-        cv_image = bridge.imgmsg_to_cv2(msg)
-        input_image = cv2.normalize(cv_image, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8UC1)
-        output_image = clahe.apply(input_image)
+        input_image = bridge.imgmsg_to_cv2(msg)
+        clahe_image = clahe.apply(input_image)
+        output_image = cv2.normalize(clahe_image, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8UC1)
 
-        Stamp = rospy.rostime.Time.from_sec(time.time())
         img_msg = Image()
         img_msg = bridge.cv2_to_imgmsg(output_image)
         img_msg.header.seq = count
-        img_msg.header.stamp = Stamp
+        img_msg.header.stamp = msg.header.stamp
         img_msg.header.frame_id = "camera"
 
-        new_bag.write('camera/image_raw', img_msg, Stamp)
+        new_bag.write('camera/image_raw', img_msg, msg.header.stamp)
 
         count += 1
     except Exception as e:
