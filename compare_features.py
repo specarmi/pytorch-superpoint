@@ -6,10 +6,8 @@ import matplotlib.pyplot as plt
 import cv2
 
 
-def read_image(config, path):
-    size = config['data']['preprocessing']['resize']
+def read_image(path):
     input_image = cv2.imread(path)
-    input_image = cv2.resize(input_image, (size[1], size[0]), interpolation=cv2.INTER_AREA)
     input_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2GRAY)
     input_image_float = input_image.astype('float32') / 255.0
     H, W = input_image_float.shape[0], input_image_float.shape[1]
@@ -60,7 +58,8 @@ def plot_superpoint_matches(config, img_1, img_2, img_1_tensor, img_2_tensor):
     matches = sorted(matches, key = lambda x:x.distance)
 
     # Draw all matches
-    img_3 = cv2.drawMatches(img_1, kpts_1, img_2, kpts_2, matches[:30], None, 
+    print(len(matches))
+    img_3 = cv2.drawMatches(img_1, kpts_1, img_2, kpts_2, matches[:100], None, 
         flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
     plt.imshow(img_3)
     plt.show()
@@ -83,7 +82,8 @@ def plot_orb_matches(img_1, img_2):
     matches = sorted(matches, key = lambda x:x.distance)
     
     # Draw all matches
-    img_3 = cv2.drawMatches(img_1, kpts_1, img_2, kpts_2, matches[:30], None, 
+    print(len(matches))
+    img_3 = cv2.drawMatches(img_1, kpts_1, img_2, kpts_2, matches[:100], None, 
         flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
     plt.imshow(img_3)
     plt.show()
@@ -105,8 +105,8 @@ if __name__ == "__main__":
     # Import images
     img_1_path = config['data']['filepath'] + args.img_1
     img_2_path = config['data']['filepath'] + args.img_2
-    img_1, img_1_tensor = read_image(config, img_1_path) 
-    img_2, img_2_tensor = read_image(config, img_2_path)
+    img_1, img_1_tensor = read_image(img_1_path) 
+    img_2, img_2_tensor = read_image(img_2_path)
 
     # Plot matches
     plot_superpoint_matches(config, img_1, img_2, img_1_tensor, img_2_tensor)

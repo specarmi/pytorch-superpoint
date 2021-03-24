@@ -1,8 +1,6 @@
 data:
     dataset: 'FLIR_ADAS'
-    filepath: '../datasets/FLIR_ADAS/video/PreviewData/'
-    preprocessing:
-        resize: [256, 320]
+    filepath: '../datasets/vivid/indoor_robust_local_data/images/'
     gaussian_label:
         enable: false
 front_end_model: 'Val_model_heatmap'  # 'Train_model_heatmap'
@@ -15,5 +13,5 @@ model:
     subpixel: 
         enable: true
         patch_size: 5
-    pretrained: 'logs/superpoint_flir/checkpoints/superPointNet_58000_checkpoint.pth.tar'
+    pretrained: 'logs/superpoint_flir_clahe/checkpoints/superPointNet_46000_checkpoint.pth.tar'
     batch_size: 1
