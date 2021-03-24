@@ -26,7 +26,7 @@ def get_pts_desc_from_agent(val_agent, img, device, subpixel, patch_size):
     # heatmap, pts to desc
     desc_sparse = val_agent.desc_to_sparseDesc()
 
-    return np.asarray(pts[0]).T, np.asarray(desc_sparse[0]).T
+    return np.asarray(pts[0], dtype = np.float32).T, np.asarray(desc_sparse[0], dtype = np.float32).T
 
 if __name__ == "__main__":
     # Handle arguments
