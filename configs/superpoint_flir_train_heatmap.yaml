@@ -2,7 +2,7 @@ data:
     # name: 'coco'
     dataset: 'FLIR_ADAS' # 'coco'
 
-    labels: logs/magicpoint_synth_flir/predictions
+    labels: logs/magicpoint_synth_flir_clahe/predictions
 
     gaussian_label:
         enable: true

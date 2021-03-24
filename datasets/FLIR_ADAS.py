@@ -54,7 +54,7 @@ class FLIR_ADAS(data.Dataset):
         self.action = 'train' if task == 'train' else 'val'
 
         # get files
-        base_path = Path(DATA_PATH, 'FLIR_ADAS/' + task + '/PreviewData/')
+        base_path = Path(DATA_PATH, 'FLIR_ADAS/' + task + '/Data_CLAHE_AGC/')
         image_paths = list(base_path.iterdir())
         names = [p.stem for p in image_paths]
         image_paths = [str(p) for p in image_paths]
