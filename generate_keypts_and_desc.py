@@ -8,12 +8,14 @@ import os
 from utils.loader import get_module
 
 
-def read_image(path):
+def read_image(config, path):
+    size = config['data']['preprocessing']['resize']
     input_image = cv2.imread(path)
+    input_image = cv2.resize(input_image, (size[1], size[0]), interpolation=cv2.INTER_AREA)
     input_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2GRAY)
     input_image_float = input_image.astype('float32') / 255.0
     H, W = input_image_float.shape[0], input_image_float.shape[1]
-    return torch.tensor(input_image_float, dtype=torch.float32).reshape(1, 1, H, W)
+    return input_image, torch.tensor(input_image_float, dtype=torch.float32).reshape(1, 1, H, W)
 
 def get_pts_desc_from_agent(val_agent, img, device, subpixel, patch_size):
     val_agent.run(img.to(device))
@@ -44,9 +46,14 @@ if __name__ == "__main__":
 
     # Load the model
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    if(torch.cuda.is_available()):
+        print('using cuda')
     Val_model_heatmap = get_module("", config["front_end_model"])
     val_agent = Val_model_heatmap(config["model"], device=device)
     val_agent.loadModel()
+
+    # Create the ORB detector
+    orb = cv2.ORB_create()
 
     # Create the directory for the keypoints and descriptors
     storage_dir = config['data']['storagepath']
@@ -59,17 +66,21 @@ if __name__ == "__main__":
         image_path = image_folder + image_file
 
         # Import the image
-        img = read_image(image_path)
+        img_np, img = read_image(config, image_path)
     
         # Generate keypoints and descriptors
-        kpts, desc = get_pts_desc_from_agent(val_agent, img, device, subpixel, patch_size)
+        if config['feature'] == 'superpoint':
+            kpts, desc = get_pts_desc_from_agent(val_agent, img, device, subpixel, patch_size)
+        elif config['feature'] == 'orb':
+            kpts, desc = orb.detectAndCompute(img_np, None)
+            kpts = np.asarray([[kp.pt[0], kp.pt[1], kp.response] for kp in kpts])
 
         # Keep only the top 300 points (like original bag of binary words paper)
-        if config['data']['for_vocab']:
+        if config['data']['for_vocab'] and not(config['feature'] == 'orb'):
             pts = np.hstack((kpts, desc))
             pts = pts[np.argsort(pts[:, 2])]
-            kpts = pts[-300:, :3]
-            desc = pts[-300:, 3:]
+            kpts = pts[-5000:, :3]
+            desc = pts[-5000:, 3:]
     
         # Write the results to a yaml file
         result_file = cv2.FileStorage(storage_dir + str(index + 1) + '.yaml', 1)

@@ -1,8 +1,11 @@
+feature: 'superpoint'
 data:
     dataset: 'FLIR_ADAS'
-    filepath: '../datasets/vivid/indoor_robust_local_data/images/' #'../datasets/FLIR_ADAS/train/Data_CLAHE_AGC/'
-    storagepath: '../datasets/vivid/indoor_robust_local_data/Keypts_and_Desc/' #'../datasets/FLIR_ADAS/train/Keypts_and_Desc/'
-    for_vocab: false #true
+    filepath: '../datasets/kitti/data_odometry_gray/dataset/sequences/03/image_0/'
+    storagepath: '../datasets/kitti/data_odometry_gray/dataset/sequences/03/RGB_Feat_and_Descriptors/'
+    for_vocab: false
+    preprocessing:
+        resize: [368, 1240]
     gaussian_label:
         enable: false
 front_end_model: 'Val_model_heatmap'  # 'Train_model_heatmap'
@@ -15,5 +18,5 @@ model:
     subpixel: 
         enable: true
         patch_size: 5
-    pretrained: 'logs/superpoint_flir_clahe/checkpoints/superPointNet_46000_checkpoint.pth.tar'
+    pretrained: 'logs/superpoint_coco_heat2_0/checkpoints/superPointNet_170000_checkpoint.pth.tar'
     batch_size: 1
