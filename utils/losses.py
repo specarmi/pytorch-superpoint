@@ -71,7 +71,7 @@ def extract_patch_from_points(heatmap, points, patch_size=5):
     # crop it
     patches = []
     ext = lambda img, pnt, wid: img[pnt[1]:pnt[1]+wid, pnt[0]:pnt[0]+wid]
-    print("heatmap: ", heatmap.shape)
+    #print("heatmap: ", heatmap.shape)
     for i in range(points.shape[0]):
         # print("point: ", points[i,:])
         patch = ext(heatmap, points[i,:].astype(int), patch_size)
